@@ -28,8 +28,18 @@ fun DynamoDbClient.putItem(tableName: String, block: PutItemRequestBuilder.() ->
     return putItem(request)
 }
 
+fun DynamoDbClient.putItem(tableName: String, item: Item, block: PutItemRequestBuilder.() -> Unit = {}): PutItemResponse {
+    val request = PutItemRequestBuilder(tableName, item).apply(block).build()
+    return putItem(request)
+}
+
 suspend fun DynamoDbAsyncClient.putItem(tableName: String, block: PutItemRequestBuilder.() -> Unit): PutItemResponse {
     val request = PutItemRequestBuilder(tableName).apply(block).build()
+    return putItem(request).await()
+}
+
+suspend fun DynamoDbAsyncClient.putItem(tableName: String, item: Item, block: PutItemRequestBuilder.() -> Unit = {}): PutItemResponse {
+    val request = PutItemRequestBuilder(tableName, item).apply(block).build()
     return putItem(request).await()
 }
 

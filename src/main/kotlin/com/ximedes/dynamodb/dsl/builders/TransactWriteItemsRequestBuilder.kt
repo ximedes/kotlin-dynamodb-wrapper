@@ -18,6 +18,7 @@
 package com.ximedes.dynamodb.dsl.builders
 
 import com.ximedes.dynamodb.dsl.DynamoDbDSL
+import com.ximedes.dynamodb.dsl.Item
 import software.amazon.awssdk.services.dynamodb.model.ReturnConsumedCapacity
 import software.amazon.awssdk.services.dynamodb.model.ReturnItemCollectionMetrics
 import software.amazon.awssdk.services.dynamodb.model.TransactWriteItem
@@ -38,6 +39,11 @@ class TransactWriteItemsRequestBuilder() {
 
     fun put(tableName: String, block: PutBuilder.() -> Unit) {
         val put = PutBuilder(tableName).apply(block).build()
+        writeItems.add(TransactWriteItem.builder().put(put).build())
+    }
+
+    fun put(tableName: String, item: Item, block: PutBuilder.() -> Unit = {}) {
+        val put = PutBuilder(tableName, item).apply(block).build()
         writeItems.add(TransactWriteItem.builder().put(put).build())
     }
 

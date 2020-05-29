@@ -18,11 +18,17 @@
 package com.ximedes.dynamodb.dsl.builders
 
 import com.ximedes.dynamodb.dsl.DynamoDbDSL
+import com.ximedes.dynamodb.dsl.Item
 import software.amazon.awssdk.services.dynamodb.model.Put
 import software.amazon.awssdk.services.dynamodb.model.ReturnValuesOnConditionCheckFailure
 
 @DynamoDbDSL
 class PutBuilder(tableName: String) {
+
+    constructor(tableName: String, item: Item) : this(tableName) {
+        _builder.item(item)
+    }
+
     private val _builder = Put.builder().tableName(tableName)
 
     fun build(): Put = _builder.build()

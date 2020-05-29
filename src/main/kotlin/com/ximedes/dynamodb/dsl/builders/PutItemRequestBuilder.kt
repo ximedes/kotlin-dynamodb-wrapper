@@ -18,12 +18,18 @@
 package com.ximedes.dynamodb.dsl.builders
 
 import com.ximedes.dynamodb.dsl.DynamoDbDSL
+import com.ximedes.dynamodb.dsl.Item
 import software.amazon.awssdk.services.dynamodb.model.PutItemRequest
 import software.amazon.awssdk.services.dynamodb.model.ReturnConsumedCapacity
 import software.amazon.awssdk.services.dynamodb.model.ReturnItemCollectionMetrics
 
 @DynamoDbDSL
 class PutItemRequestBuilder(tableName: String) {
+
+    constructor(tableName: String, item: Item) : this(tableName) {
+        _builder.item(item)
+    }
+
     private val _builder = PutItemRequest.builder().tableName(tableName)
 
     fun build(): PutItemRequest = _builder.build()

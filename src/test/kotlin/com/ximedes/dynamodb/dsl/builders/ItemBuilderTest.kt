@@ -18,7 +18,6 @@
 package com.ximedes.dynamodb.dsl.builders
 
 import com.ximedes.dynamodb.dsl.Item
-import com.ximedes.dynamodb.dsl.builders.ItemBuilder.Null
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
@@ -54,7 +53,6 @@ internal class ItemBuilderTest {
             "item" from {
                 "string" from "b"
             }
-            "null" from Null
         }
 
         assertAll(
@@ -99,8 +97,7 @@ internal class ItemBuilderTest {
                             AttributeValue.builder().m(mapOf("string" to AttributeValue.builder().s("b").build())).build(),
                             dslItem["item"]
                     )
-                },
-                { assertEquals(AttributeValue.builder().nul(true).build(), dslItem["null"]) }
+                }
         )
 
     }

@@ -63,6 +63,7 @@ internal class PutItemRequestBuilderTest {
             }
         }
         assertEquals(sdkRequest.item(), dslRequest.item())
+
     }
 
     @Test
