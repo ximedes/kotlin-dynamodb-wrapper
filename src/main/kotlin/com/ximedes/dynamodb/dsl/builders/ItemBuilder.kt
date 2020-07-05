@@ -83,6 +83,11 @@ class ItemBuilder {
         value?.let { item[this] = AttributeValue.builder().bs(value.map { SdkBytes.fromInputStream(it) }).build() }
     }
 
+
+    infix fun String.fromList(block: ItemListBuilder.() -> Unit) {
+        item[this] = AttributeValue.builder().l(ItemListBuilder().apply(block).build()).build()
+    }
+
     fun build(): Map<String, AttributeValue> = item
 
 }

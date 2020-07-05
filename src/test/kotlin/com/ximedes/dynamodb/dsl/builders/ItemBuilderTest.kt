@@ -19,6 +19,7 @@ package com.ximedes.dynamodb.dsl.builders
 
 import com.ximedes.dynamodb.dsl.Item
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import software.amazon.awssdk.core.SdkBytes
@@ -52,6 +53,16 @@ internal class ItemBuilderTest {
             "list_of_inputStreams" from listOfByteArrays.map { ByteArrayInputStream(it) }
             "item" from {
                 "string" from "b"
+            }
+            "items" fromList {
+                item {
+                    "string" from "a"
+                    "int" from 1
+                }
+                item {
+                    "string" from "b"
+                    "int" from 2
+                }
             }
         }
 
@@ -96,6 +107,15 @@ internal class ItemBuilderTest {
                     assertEquals(
                             AttributeValue.builder().m(mapOf("string" to AttributeValue.builder().s("b").build())).build(),
                             dslItem["item"]
+                    )
+                },
+                {
+                    assertEquals(
+                            AttributeValue.builder().l(listOf(
+                                AttributeValue.builder().m(mapOf("string" to AttributeValue.builder().s("a").build(), "int" to AttributeValue.builder().n("1").build())).build(),
+                                AttributeValue.builder().m(mapOf("string" to AttributeValue.builder().s("b").build(), "int" to AttributeValue.builder().n("2").build())).build()
+                            )).build(),
+                            dslItem["items"]
                     )
                 }
         )
