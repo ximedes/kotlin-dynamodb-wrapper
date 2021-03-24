@@ -28,7 +28,7 @@ annotation class DynamoDbDSL
 inline fun <reified T : Any> Item.take(key: String): T = takeOrNull(key)
         ?: error("Property '$key' is null, expected a ${T::class}")
 
-inline fun <reified T : Any?> Item.takeOrNull(key: String): T = when (T::class) {
+inline fun <reified T : Any> Item.takeOrNull(key: String): T? = when (T::class) {
     String::class -> get(key)?.s()
     Int::class -> get(key)?.n()?.toInt()
     Long::class -> get(key)?.n()?.toLong()
@@ -36,7 +36,7 @@ inline fun <reified T : Any?> Item.takeOrNull(key: String): T = when (T::class) 
     Boolean::class -> get(key)?.bool()
     ByteArray::class -> get(key)?.b()?.asByteArray()
     else -> throw IllegalArgumentException("Unsupported type ${T::class}")
-} as T
+} as T?
 
 inline fun <reified T : Any> Item.takeAll(key: String): List<T> = when (T::class) {
     String::class -> get(key)?.ss()?.toList() ?: emptyList<T>()
