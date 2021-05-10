@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 the original author or authors.
+ * Copyright 2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,22 +18,14 @@
 package com.ximedes.dynamodb.dsl.builders
 
 import com.ximedes.dynamodb.dsl.DynamoDbDSL
-import software.amazon.awssdk.services.dynamodb.model.*
+import software.amazon.awssdk.services.dynamodb.model.ProvisionedThroughput
+import software.amazon.awssdk.services.dynamodb.model.UpdateGlobalSecondaryIndexAction
 
 @DynamoDbDSL
-class GlobalSecondaryIndexBuilder(name: String) {
-    private val _builder = GlobalSecondaryIndex.builder().indexName(name)
-    private val keySchemaElements = mutableListOf<KeySchemaElement>()
+class UpdateGlobalSecondaryIndexActionBuilder(name: String) {
+    private val _builder = UpdateGlobalSecondaryIndexAction.builder().indexName(name)
     private var provisionedThroughput: ProvisionedThroughput? = null
 
-
-    fun partitionKey(name: String) {
-        keySchemaElements.add(KeySchemaElement.builder().attributeName(name).keyType(KeyType.HASH).build())
-    }
-
-    fun sortKey(name: String) {
-        keySchemaElements.add(KeySchemaElement.builder().attributeName(name).keyType(KeyType.RANGE).build())
-    }
 
     fun provisionedThroughput(readCapacityUnits: Long, writeCapacityUnits: Long) {
         provisionedThroughput = ProvisionedThroughput.builder()
@@ -42,15 +34,7 @@ class GlobalSecondaryIndexBuilder(name: String) {
                 .build()
     }
 
-    fun projection(type: ProjectionType, block: (ProjectionBuilder.() -> Unit) = {}) {
-        val projection = ProjectionBuilder(type).apply(block).build()
-        _builder.projection(projection)
-    }
-
-
-    fun build(parentThroughput: ProvisionedThroughput? = null): GlobalSecondaryIndex {
-        _builder.keySchema(*keySchemaElements.toTypedArray())
-
+    fun build(parentThroughput: ProvisionedThroughput? = null): UpdateGlobalSecondaryIndexAction {
         (provisionedThroughput ?: parentThroughput)?.let {
             _builder.provisionedThroughput(it)
         }
