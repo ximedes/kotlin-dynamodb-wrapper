@@ -24,19 +24,15 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableResponse
 
 fun DynamoDbClient.deleteTable(
-        tableName: String,
-        init: DeleteTableRequestBuilder.() -> Unit = {}
+    table: String, init: DeleteTableRequestBuilder.() -> Unit = {}
 ): DeleteTableResponse {
-    val request = DeleteTableRequestBuilder(tableName).apply(init).build()
-    return deleteTable(request)
+    return DeleteTableRequestBuilder(table).apply(init).build().logAndRun(::deleteTable)
 }
 
 suspend fun DynamoDbAsyncClient.deleteTable(
-        tableName: String,
-        init: DeleteTableRequestBuilder.() -> Unit = {}
+    table: String, init: DeleteTableRequestBuilder.() -> Unit = {}
 ): DeleteTableResponse {
-    val request = DeleteTableRequestBuilder(tableName).apply(init).build()
-    return deleteTable(request).await()
+    return DeleteTableRequestBuilder(table).apply(init).build().logAndRun(::deleteTable).await()
 }
 
 

@@ -24,12 +24,10 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.TransactWriteItemsResponse
 
 fun DynamoDbClient.writeTransaction(block: TransactWriteItemsRequestBuilder.() -> Unit): TransactWriteItemsResponse {
-    val request = TransactWriteItemsRequestBuilder().apply(block).build()
-    return transactWriteItems(request)
+    return TransactWriteItemsRequestBuilder().apply(block).build().logAndRun(::transactWriteItems)
 }
 
 suspend fun DynamoDbAsyncClient.writeTransaction(block: TransactWriteItemsRequestBuilder.() -> Unit): TransactWriteItemsResponse {
-    val request = TransactWriteItemsRequestBuilder().apply(block).build()
-    return transactWriteItems(request).await()
+    return TransactWriteItemsRequestBuilder().apply(block).build().logAndRun(::transactWriteItems).await()
 }
 

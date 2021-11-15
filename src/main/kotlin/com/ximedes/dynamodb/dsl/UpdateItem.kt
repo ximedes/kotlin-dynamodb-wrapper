@@ -23,16 +23,13 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemResponse
 
-fun DynamoDbClient.updateItem(tableName: String, block: UpdateItemRequestBuilder.() -> Unit): UpdateItemResponse {
-    val request = UpdateItemRequestBuilder(tableName).apply(block).build()
-    return updateItem(request)
+fun DynamoDbClient.updateItem(table: String, block: UpdateItemRequestBuilder.() -> Unit): UpdateItemResponse {
+    return UpdateItemRequestBuilder(table).apply(block).build().logAndRun(::updateItem)
 }
 
 suspend fun DynamoDbAsyncClient.updateItem(
-        tableName: String,
-        block: UpdateItemRequestBuilder.() -> Unit
+    table: String, block: UpdateItemRequestBuilder.() -> Unit
 ): UpdateItemResponse {
-    val request = UpdateItemRequestBuilder(tableName).apply(block).build()
-    return updateItem(request).await()
+    return UpdateItemRequestBuilder(table).apply(block).build().logAndRun(::updateItem).await()
 }
 

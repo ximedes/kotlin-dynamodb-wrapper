@@ -24,22 +24,22 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.PutItemResponse
 
 fun DynamoDbClient.putItem(tableName: String, block: PutItemRequestBuilder.() -> Unit): PutItemResponse {
-    val request = PutItemRequestBuilder(tableName).apply(block).build()
-    return putItem(request)
+    return PutItemRequestBuilder(tableName).apply(block).build().logAndRun(::putItem)
 }
 
-fun DynamoDbClient.putItem(tableName: String, item: Item, block: PutItemRequestBuilder.() -> Unit = {}): PutItemResponse {
-    val request = PutItemRequestBuilder(tableName, item).apply(block).build()
-    return putItem(request)
+fun DynamoDbClient.putItem(
+    tableName: String, item: Item, block: PutItemRequestBuilder.() -> Unit = {}
+): PutItemResponse {
+    return PutItemRequestBuilder(tableName, item).apply(block).build().logAndRun(::putItem)
 }
 
 suspend fun DynamoDbAsyncClient.putItem(tableName: String, block: PutItemRequestBuilder.() -> Unit): PutItemResponse {
-    val request = PutItemRequestBuilder(tableName).apply(block).build()
-    return putItem(request).await()
+    return PutItemRequestBuilder(tableName).apply(block).build().logAndRun(::putItem).await()
 }
 
-suspend fun DynamoDbAsyncClient.putItem(tableName: String, item: Item, block: PutItemRequestBuilder.() -> Unit = {}): PutItemResponse {
-    val request = PutItemRequestBuilder(tableName, item).apply(block).build()
-    return putItem(request).await()
+suspend fun DynamoDbAsyncClient.putItem(
+    tableName: String, item: Item, block: PutItemRequestBuilder.() -> Unit = {}
+): PutItemResponse {
+    return PutItemRequestBuilder(tableName, item).apply(block).build().logAndRun(::putItem).await()
 }
 

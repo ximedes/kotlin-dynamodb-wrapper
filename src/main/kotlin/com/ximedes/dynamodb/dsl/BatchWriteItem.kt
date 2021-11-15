@@ -24,11 +24,9 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemResponse
 
 fun DynamoDbClient.batchWriteItem(init: BatchWriteItemRequestBuilder.() -> Unit): BatchWriteItemResponse {
-    val request = BatchWriteItemRequestBuilder().apply(init).build()
-    return batchWriteItem(request)
+    return BatchWriteItemRequestBuilder().apply(init).build().logAndRun(::batchWriteItem)
 }
 
 suspend fun DynamoDbAsyncClient.batchWriteItem(init: BatchWriteItemRequestBuilder.() -> Unit): BatchWriteItemResponse {
-    val request = BatchWriteItemRequestBuilder().apply(init).build()
-    return batchWriteItem(request).await()
+    return BatchWriteItemRequestBuilder().apply(init).build().logAndRun(::batchWriteItem).await()
 }

@@ -23,12 +23,10 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.GetItemResponse
 
-fun DynamoDbClient.getItem(tableName: String, init: GetItemRequestBuilder.() -> Unit): GetItemResponse {
-    val request = GetItemRequestBuilder(tableName).apply(init).build()
-    return getItem(request)
+fun DynamoDbClient.getItem(table: String, init: GetItemRequestBuilder.() -> Unit): GetItemResponse {
+    return GetItemRequestBuilder(table).apply(init).build().logAndRun(::getItem)
 }
 
-suspend fun DynamoDbAsyncClient.getItem(tableName: String, init: GetItemRequestBuilder.() -> Unit): GetItemResponse {
-    val request = GetItemRequestBuilder(tableName).apply(init).build()
-    return getItem(request).await()
+suspend fun DynamoDbAsyncClient.getItem(table: String, init: GetItemRequestBuilder.() -> Unit): GetItemResponse {
+    return GetItemRequestBuilder(table).apply(init).build().logAndRun(::getItem).await()
 }

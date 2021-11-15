@@ -24,12 +24,10 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.TransactGetItemsResponse
 
 fun DynamoDbClient.readTransaction(block: TransactGetItemsRequestBuilder.() -> Unit): TransactGetItemsResponse {
-    val request = TransactGetItemsRequestBuilder().apply(block).build()
-    return transactGetItems(request)
+    return TransactGetItemsRequestBuilder().apply(block).build().logAndRun(::transactGetItems)
 }
 
 suspend fun DynamoDbAsyncClient.readTransaction(block: TransactGetItemsRequestBuilder.() -> Unit): TransactGetItemsResponse {
-    val request = TransactGetItemsRequestBuilder().apply(block).build()
-    return transactGetItems(request).await()
+    return TransactGetItemsRequestBuilder().apply(block).build().logAndRun(::transactGetItems).await()
 }
 

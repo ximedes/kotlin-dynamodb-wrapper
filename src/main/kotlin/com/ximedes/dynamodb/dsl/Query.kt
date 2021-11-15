@@ -24,13 +24,11 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse
 
 fun DynamoDbClient.query(tableName: String, block: QueryRequestBuilder.() -> Unit): QueryResponse {
-    val queryRequest = QueryRequestBuilder(tableName).apply(block).build()
-    return query(queryRequest)
+    return QueryRequestBuilder(tableName).apply(block).build().logAndRun(::query)
 }
 
 suspend fun DynamoDbAsyncClient.query(tableName: String, block: QueryRequestBuilder.() -> Unit): QueryResponse {
-    val queryRequest = QueryRequestBuilder(tableName).apply(block).build()
-    return query(queryRequest).await()
+    return QueryRequestBuilder(tableName).apply(block).build().logAndRun(::query).await()
 }
 
 

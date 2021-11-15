@@ -23,15 +23,12 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemResponse
 
-fun DynamoDbClient.deleteItem(tableName: String, block: DeleteItemRequestBuilder.() -> Unit): DeleteItemResponse {
-    val request = DeleteItemRequestBuilder(tableName).apply(block).build()
-    return deleteItem(request)
+fun DynamoDbClient.deleteItem(table: String, block: DeleteItemRequestBuilder.() -> Unit): DeleteItemResponse {
+    return DeleteItemRequestBuilder(table).apply(block).build().logAndRun(::deleteItem)
 }
 
 suspend fun DynamoDbAsyncClient.deleteItem(
-        tableName: String,
-        block: DeleteItemRequestBuilder.() -> Unit
+    table: String, block: DeleteItemRequestBuilder.() -> Unit
 ): DeleteItemResponse {
-    val request = DeleteItemRequestBuilder(tableName).apply(block).build()
-    return deleteItem(request).await()
+    return DeleteItemRequestBuilder(table).apply(block).build().logAndRun(::deleteItem).await()
 }

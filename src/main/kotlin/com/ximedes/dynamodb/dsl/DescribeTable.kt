@@ -24,19 +24,15 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableResponse
 
 fun DynamoDbClient.describeTable(
-        tableName: String,
-        init: DescribeTableRequestBuilder.() -> Unit = {}
+    table: String, init: DescribeTableRequestBuilder.() -> Unit = {}
 ): DescribeTableResponse {
-    val request = DescribeTableRequestBuilder(tableName).apply(init).build()
-    return describeTable(request)
+    return DescribeTableRequestBuilder(table).apply(init).build().logAndRun(::describeTable)
 }
 
 suspend fun DynamoDbAsyncClient.describeTable(
-        tableName: String,
-        init: DescribeTableRequestBuilder.() -> Unit = {}
+    table: String, init: DescribeTableRequestBuilder.() -> Unit = {}
 ): DescribeTableResponse {
-    val request = DescribeTableRequestBuilder(tableName).apply(init).build()
-    return describeTable(request).await()
+    return DescribeTableRequestBuilder(table).apply(init).build().logAndRun(::describeTable).await()
 }
 
 
