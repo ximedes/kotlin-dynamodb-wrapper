@@ -18,7 +18,6 @@
 package com.ximedes.dynamodb.dsl
 
 import com.ximedes.dynamodb.dsl.builders.TransactGetItemsRequestBuilder
-import kotlinx.coroutines.future.await
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.TransactGetItemsResponse
@@ -28,6 +27,6 @@ fun DynamoDbClient.readTransaction(block: TransactGetItemsRequestBuilder.() -> U
 }
 
 suspend fun DynamoDbAsyncClient.readTransaction(block: TransactGetItemsRequestBuilder.() -> Unit): TransactGetItemsResponse {
-    return TransactGetItemsRequestBuilder().apply(block).build().logAndRun(::transactGetItems).await()
+    return TransactGetItemsRequestBuilder().apply(block).build().logAndRunAsync(::transactGetItems)
 }
 

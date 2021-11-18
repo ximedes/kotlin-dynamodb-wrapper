@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.ximedes</groupId>
     <artifactId>kotlin-dynamodb-wrapper</artifactId>
-    <version>0.5.1</version>
+    <version>0.5.2</version>
     <packaging>jar</packaging>
 
     <name>kotlin-dynamodb-wrapper</name>

@@ -17,8 +17,10 @@
 
 package com.ximedes.dynamodb.dsl
 
+import kotlinx.coroutines.future.await
 import org.slf4j.LoggerFactory
 import software.amazon.awssdk.services.dynamodb.model.DynamoDbRequest
+import java.util.concurrent.CompletableFuture
 
 private val logger = LoggerFactory.getLogger("com.ximedes.dynamodb.dsl")
 
@@ -28,6 +30,18 @@ fun <T : DynamoDbRequest, U> T.logAndRun(block: (T) -> U): U {
     }
     try {
         return block(this)
+    } catch (e: Exception) {
+        logger.error("Caught exception when executing request $this")
+        throw e
+    }
+}
+
+suspend fun <T : DynamoDbRequest, U> T.logAndRunAsync(block: (T) -> CompletableFuture<U>): U {
+    if (logger.isDebugEnabled) {
+        logger.debug("Executing $this")
+    }
+    try {
+        return block(this).await()
     } catch (e: Exception) {
         logger.error("Caught exception when executing request $this")
         throw e

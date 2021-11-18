@@ -18,7 +18,6 @@
 package com.ximedes.dynamodb.dsl
 
 import com.ximedes.dynamodb.dsl.builders.UpdateItemRequestBuilder
-import kotlinx.coroutines.future.await
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemResponse
@@ -30,6 +29,6 @@ fun DynamoDbClient.updateItem(table: String, block: UpdateItemRequestBuilder.() 
 suspend fun DynamoDbAsyncClient.updateItem(
     table: String, block: UpdateItemRequestBuilder.() -> Unit
 ): UpdateItemResponse {
-    return UpdateItemRequestBuilder(table).apply(block).build().logAndRun(::updateItem).await()
+    return UpdateItemRequestBuilder(table).apply(block).build().logAndRunAsync(::updateItem)
 }
 

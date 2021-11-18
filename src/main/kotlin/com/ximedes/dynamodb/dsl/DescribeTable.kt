@@ -18,7 +18,6 @@
 package com.ximedes.dynamodb.dsl
 
 import com.ximedes.dynamodb.dsl.builders.DescribeTableRequestBuilder
-import kotlinx.coroutines.future.await
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.DescribeTableResponse
@@ -32,7 +31,7 @@ fun DynamoDbClient.describeTable(
 suspend fun DynamoDbAsyncClient.describeTable(
     table: String, init: DescribeTableRequestBuilder.() -> Unit = {}
 ): DescribeTableResponse {
-    return DescribeTableRequestBuilder(table).apply(init).build().logAndRun(::describeTable).await()
+    return DescribeTableRequestBuilder(table).apply(init).build().logAndRunAsync(::describeTable)
 }
 
 

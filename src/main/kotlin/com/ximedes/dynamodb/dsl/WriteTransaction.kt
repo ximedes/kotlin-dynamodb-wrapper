@@ -18,7 +18,6 @@
 package com.ximedes.dynamodb.dsl
 
 import com.ximedes.dynamodb.dsl.builders.TransactWriteItemsRequestBuilder
-import kotlinx.coroutines.future.await
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.TransactWriteItemsResponse
@@ -28,6 +27,6 @@ fun DynamoDbClient.writeTransaction(block: TransactWriteItemsRequestBuilder.() -
 }
 
 suspend fun DynamoDbAsyncClient.writeTransaction(block: TransactWriteItemsRequestBuilder.() -> Unit): TransactWriteItemsResponse {
-    return TransactWriteItemsRequestBuilder().apply(block).build().logAndRun(::transactWriteItems).await()
+    return TransactWriteItemsRequestBuilder().apply(block).build().logAndRunAsync(::transactWriteItems)
 }
 

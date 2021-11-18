@@ -18,7 +18,6 @@
 package com.ximedes.dynamodb.dsl
 
 import com.ximedes.dynamodb.dsl.builders.UpdateTableRequestBuilder
-import kotlinx.coroutines.future.await
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.UpdateTableResponse
@@ -30,6 +29,6 @@ fun DynamoDbClient.updateTable(table: String, block: UpdateTableRequestBuilder.(
 suspend fun DynamoDbAsyncClient.updateTable(
     table: String, block: UpdateTableRequestBuilder.() -> Unit
 ): UpdateTableResponse {
-    return UpdateTableRequestBuilder(table).apply(block).build().logAndRun(::updateTable).await()
+    return UpdateTableRequestBuilder(table).apply(block).build().logAndRunAsync(::updateTable)
 }
 

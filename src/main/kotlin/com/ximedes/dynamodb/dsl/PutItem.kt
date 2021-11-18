@@ -40,6 +40,6 @@ suspend fun DynamoDbAsyncClient.putItem(tableName: String, block: PutItemRequest
 suspend fun DynamoDbAsyncClient.putItem(
     tableName: String, item: Item, block: PutItemRequestBuilder.() -> Unit = {}
 ): PutItemResponse {
-    return PutItemRequestBuilder(tableName, item).apply(block).build().logAndRun(::putItem).await()
+    return PutItemRequestBuilder(tableName, item).apply(block).build().logAndRunAsync(::putItem)
 }
 

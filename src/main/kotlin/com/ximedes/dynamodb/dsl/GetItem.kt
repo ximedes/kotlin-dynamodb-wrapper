@@ -18,7 +18,6 @@
 package com.ximedes.dynamodb.dsl
 
 import com.ximedes.dynamodb.dsl.builders.GetItemRequestBuilder
-import kotlinx.coroutines.future.await
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.GetItemResponse
@@ -28,5 +27,5 @@ fun DynamoDbClient.getItem(table: String, init: GetItemRequestBuilder.() -> Unit
 }
 
 suspend fun DynamoDbAsyncClient.getItem(table: String, init: GetItemRequestBuilder.() -> Unit): GetItemResponse {
-    return GetItemRequestBuilder(table).apply(init).build().logAndRun(::getItem).await()
+    return GetItemRequestBuilder(table).apply(init).build().logAndRunAsync(::getItem)
 }

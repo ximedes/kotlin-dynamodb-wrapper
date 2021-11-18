@@ -18,7 +18,6 @@
 package com.ximedes.dynamodb.dsl
 
 import com.ximedes.dynamodb.dsl.builders.QueryRequestBuilder
-import kotlinx.coroutines.future.await
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.QueryResponse
@@ -28,7 +27,7 @@ fun DynamoDbClient.query(tableName: String, block: QueryRequestBuilder.() -> Uni
 }
 
 suspend fun DynamoDbAsyncClient.query(tableName: String, block: QueryRequestBuilder.() -> Unit): QueryResponse {
-    return QueryRequestBuilder(tableName).apply(block).build().logAndRun(::query).await()
+    return QueryRequestBuilder(tableName).apply(block).build().logAndRunAsync(::query)
 }
 
 
