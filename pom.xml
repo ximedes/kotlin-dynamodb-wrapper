@@ -47,13 +47,13 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
-        <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
+        <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
 
-        <kotlin_version>1.3.72</kotlin_version>
-        <dynamodb.version>2.13.35</dynamodb.version>
-        <junit.jupiter.version>5.4.2</junit.jupiter.version>
-        <kotlinx-coroutines.version>1.3.7</kotlinx-coroutines.version>
-        <slf4j-api.version>1.7.32</slf4j-api.version>
+        <kotlin_version>1.9.10</kotlin_version>
+        <dynamodb.version>2.20.43</dynamodb.version>
+        <junit.jupiter.version>5.10.0</junit.jupiter.version>
+        <kotlinx-coroutines.version>1.7.3</kotlinx-coroutines.version>
+        <slf4j-api.version>1.7.36</slf4j-api.version>
     </properties>
 
     <dependencies>
@@ -97,8 +97,8 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${kotlin.compiler.jvmTarget}</source>
+                    <target>${kotlin.compiler.jvmTarget}</target>
                 </configuration>
             </plugin>
             <plugin>
