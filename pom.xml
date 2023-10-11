@@ -28,9 +28,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/Ximedes/kotlin-dynamodb-wrapper.git</connection>
+        <connection>scm:git:git://github.com/ximedes/kotlin-dynamodb-wrapper.git</connection>
         <developerConnection>scm:git:ssh://github.com/Ximedes/kotlin-dynamodb-wrapper.git</developerConnection>
-        <url>https://github.com/github.com/Ximedes/kotlin-dynamodb-wrapper/tree/master</url>
+        <url>https://github.com/github.com/ximedes/kotlin-dynamodb-wrapper/tree/master</url>
     </scm>
 
     <distributionManagement>
@@ -132,7 +132,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>3.0.1</version>
+                        <version>3.3.0</version>
                         <executions>
                             <execution>
                                 <id>attach-sources</id>
@@ -176,6 +176,7 @@
                                         <arg>--pinentry-mode</arg>
                                         <arg>loopback</arg>
                                     </gpgArguments>
+                                    <keyname>A04BFA9F9D50B5C2AB7D80FFDE514393B90F0AC3</keyname>
                                 </configuration>
                             </execution>
                         </executions>
@@ -183,7 +184,7 @@
                     <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.8</version>
+                        <version>1.6.13</version>
                         <extensions>true</extensions>
                         <configuration>
                             <serverId>ossrh</serverId>
