@@ -20,6 +20,7 @@ package com.ximedes.dynamodb.dsl.builders
 import com.ximedes.dynamodb.dsl.DynamoDbDSL
 import software.amazon.awssdk.services.dynamodb.model.ReturnConsumedCapacity
 import software.amazon.awssdk.services.dynamodb.model.ReturnItemCollectionMetrics
+import software.amazon.awssdk.services.dynamodb.model.ReturnValue
 import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest
 
 @DynamoDbDSL
@@ -56,4 +57,7 @@ class UpdateItemRequestBuilder(tableName: String) {
         _builder.returnItemCollectionMetrics(returnItemCollectionMetrics)
     }
 
+    fun returnValues(returnValue: ReturnValue){
+        _builder.returnValues(returnValue)
+    }
 }

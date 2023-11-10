@@ -19,10 +19,7 @@ package com.ximedes.dynamodb.dsl.builders
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
-import software.amazon.awssdk.services.dynamodb.model.AttributeValue
-import software.amazon.awssdk.services.dynamodb.model.ReturnConsumedCapacity
-import software.amazon.awssdk.services.dynamodb.model.ReturnItemCollectionMetrics
-import software.amazon.awssdk.services.dynamodb.model.UpdateItemRequest
+import software.amazon.awssdk.services.dynamodb.model.*
 
 internal class UpdateItemRequestBuilderTest {
 
@@ -96,5 +93,15 @@ internal class UpdateItemRequestBuilderTest {
         assertEquals(ReturnItemCollectionMetrics.SIZE, dslRequest.returnItemCollectionMetrics())
     }
 
-
+    @Test
+    fun returnValues() {
+        val sdkRequest = UpdateItemRequest.builder()
+            .returnValues(ReturnValue.ALL_NEW)
+            .build()
+        val dslRequest = dslRequest {
+            returnValues(ReturnValue.ALL_NEW)
+        }
+        assertEquals(sdkRequest.returnValues(), dslRequest.returnValues())
+        assertEquals(ReturnValue.ALL_NEW, dslRequest.returnValues())
+    }
 }
