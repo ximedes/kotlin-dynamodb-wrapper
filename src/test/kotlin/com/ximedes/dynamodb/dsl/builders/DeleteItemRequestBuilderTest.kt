@@ -23,6 +23,7 @@ import software.amazon.awssdk.services.dynamodb.model.AttributeValue
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.ReturnConsumedCapacity
 import software.amazon.awssdk.services.dynamodb.model.ReturnItemCollectionMetrics
+import software.amazon.awssdk.services.dynamodb.model.ReturnValue
 
 internal class DeleteItemRequestBuilderTest {
     private fun dslRequest(tableName: String = "foo", init: DeleteItemRequestBuilder.() -> Unit) =
@@ -96,6 +97,18 @@ internal class DeleteItemRequestBuilderTest {
             attributeNames("a" to "z")
         }
         assertEquals(sdkRequest.expressionAttributeNames(), dslRequest.expressionAttributeNames())
+    }
+
+    @Test
+    fun returnValues() {
+        val sdkRequest = DeleteItemRequest.builder()
+            .returnValues(ReturnValue.ALL_OLD)
+            .build()
+        val dslRequest = dslRequest {
+            returnValues(ReturnValue.ALL_OLD)
+        }
+        assertEquals(sdkRequest.returnValues(), dslRequest.returnValues())
+        assertEquals(ReturnValue.ALL_OLD, dslRequest.returnValues())
     }
 
 

@@ -21,6 +21,7 @@ import com.ximedes.dynamodb.dsl.DynamoDbDSL
 import software.amazon.awssdk.services.dynamodb.model.DeleteItemRequest
 import software.amazon.awssdk.services.dynamodb.model.ReturnConsumedCapacity
 import software.amazon.awssdk.services.dynamodb.model.ReturnItemCollectionMetrics
+import software.amazon.awssdk.services.dynamodb.model.ReturnValue
 
 @DynamoDbDSL
 class DeleteItemRequestBuilder(tableName: String) {
@@ -51,6 +52,10 @@ class DeleteItemRequestBuilder(tableName: String) {
 
     fun returnItemCollectionMetrics(returnItemCollectionMetrics: ReturnItemCollectionMetrics) {
         _builder.returnItemCollectionMetrics(returnItemCollectionMetrics)
+    }
+
+    fun returnValues(returnValue: ReturnValue) {
+        _builder.returnValues(returnValue)
     }
 
 }
