@@ -27,7 +27,9 @@ internal class TransactWriteItemsRequestBuilderTest {
 
     @Test
     fun returnConsumedCapacity() {
-        val sdkRequest = PutItemRequest.builder().returnConsumedCapacity(ReturnConsumedCapacity.INDEXES).build()
+        val sdkRequest = TransactWriteItemsRequest.builder()
+            .returnConsumedCapacity(ReturnConsumedCapacity.INDEXES)
+            .build()
         val dslRequest = dslRequest {
             returnConsumedCapacity(ReturnConsumedCapacity.INDEXES)
         }
@@ -38,9 +40,9 @@ internal class TransactWriteItemsRequestBuilderTest {
 
     @Test
     fun returnItemCollectionMetrics() {
-        val sdkRequest = PutItemRequest.builder()
-                .returnItemCollectionMetrics(ReturnItemCollectionMetrics.SIZE)
-                .build()
+        val sdkRequest = TransactWriteItemsRequest.builder()
+            .returnItemCollectionMetrics(ReturnItemCollectionMetrics.SIZE)
+            .build()
         val dslRequest = dslRequest {
             returnItemCollectionMetrics(ReturnItemCollectionMetrics.SIZE)
         }
