@@ -18,6 +18,7 @@
 package com.ximedes.dynamodb.dsl
 
 import com.ximedes.dynamodb.dsl.builders.ItemBuilder
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 
@@ -31,5 +32,23 @@ internal class ExtensionFunctionTest {
 
         assertNull(item.takeOrNull<String>("null"))
 
+    }
+
+    @Test
+    fun testTake() {
+        val item = ItemBuilder().apply {
+            "key" from "value"
+        }.build()
+
+        assertEquals("value", item.take<String>("key"))
+    }
+
+    @Test
+    fun testTakeAllStrings() {
+        val item = ItemBuilder().apply {
+            "listKey" from listOf("a", "b")
+        }.build()
+
+        assertEquals(listOf("a", "b"), item.takeAll<String>("listKey"))
     }
 }
