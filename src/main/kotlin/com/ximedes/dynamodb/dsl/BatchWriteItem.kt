@@ -18,7 +18,6 @@
 package com.ximedes.dynamodb.dsl
 
 import com.ximedes.dynamodb.dsl.builders.BatchWriteItemRequestBuilder
-import kotlinx.coroutines.future.await
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.BatchWriteItemResponse
@@ -28,5 +27,5 @@ fun DynamoDbClient.batchWriteItem(init: BatchWriteItemRequestBuilder.() -> Unit)
 }
 
 suspend fun DynamoDbAsyncClient.batchWriteItem(init: BatchWriteItemRequestBuilder.() -> Unit): BatchWriteItemResponse {
-    return BatchWriteItemRequestBuilder().apply(init).build().logAndRun(::batchWriteItem).await()
+    return BatchWriteItemRequestBuilder().apply(init).build().logAndRunAsync(::batchWriteItem)
 }

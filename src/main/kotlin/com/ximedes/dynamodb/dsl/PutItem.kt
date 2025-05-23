@@ -18,7 +18,6 @@
 package com.ximedes.dynamodb.dsl
 
 import com.ximedes.dynamodb.dsl.builders.PutItemRequestBuilder
-import kotlinx.coroutines.future.await
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.PutItemResponse
@@ -34,7 +33,7 @@ fun DynamoDbClient.putItem(
 }
 
 suspend fun DynamoDbAsyncClient.putItem(tableName: String, block: PutItemRequestBuilder.() -> Unit): PutItemResponse {
-    return PutItemRequestBuilder(tableName).apply(block).build().logAndRun(::putItem).await()
+    return PutItemRequestBuilder(tableName).apply(block).build().logAndRunAsync(::putItem)
 }
 
 suspend fun DynamoDbAsyncClient.putItem(
