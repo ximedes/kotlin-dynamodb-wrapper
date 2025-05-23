@@ -30,7 +30,7 @@
     <scm>
         <connection>scm:git:git://github.com/ximedes/kotlin-dynamodb-wrapper.git</connection>
         <developerConnection>scm:git:ssh://github.com/Ximedes/kotlin-dynamodb-wrapper.git</developerConnection>
-        <url>https://github.com/github.com/ximedes/kotlin-dynamodb-wrapper/tree/master</url>
+        <url>https://github.com/ximedes/kotlin-dynamodb-wrapper/tree/master</url>
     </scm>
 
     <distributionManagement>
