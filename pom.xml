@@ -49,7 +49,7 @@
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
 
-        <kotlin_version>1.9.10</kotlin_version>
+        <kotlin_version>2.1.21</kotlin_version>
         <dynamodb.version>2.20.43</dynamodb.version>
         <junit.jupiter.version>5.10.0</junit.jupiter.version>
         <kotlinx-coroutines.version>1.7.3</kotlinx-coroutines.version>
