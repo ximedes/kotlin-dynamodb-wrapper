@@ -18,7 +18,6 @@
 package com.ximedes.dynamodb.dsl
 
 import com.ximedes.dynamodb.dsl.builders.BatchGetItemRequestBuilder
-import kotlinx.coroutines.future.await
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResponse
@@ -28,5 +27,5 @@ fun DynamoDbClient.batchGetItem(init: BatchGetItemRequestBuilder.() -> Unit): Ba
 }
 
 suspend fun DynamoDbAsyncClient.batchGetItem(init: BatchGetItemRequestBuilder.() -> Unit): BatchGetItemResponse {
-    return BatchGetItemRequestBuilder().apply(init).build().logAndRun(::batchGetItem).await()
+    return BatchGetItemRequestBuilder().apply(init).build().logAndRunAsync(::batchGetItem)
 }

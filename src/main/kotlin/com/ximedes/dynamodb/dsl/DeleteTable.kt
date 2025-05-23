@@ -18,7 +18,6 @@
 package com.ximedes.dynamodb.dsl
 
 import com.ximedes.dynamodb.dsl.builders.DeleteTableRequestBuilder
-import kotlinx.coroutines.future.await
 import software.amazon.awssdk.services.dynamodb.DynamoDbAsyncClient
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableResponse
@@ -32,7 +31,7 @@ fun DynamoDbClient.deleteTable(
 suspend fun DynamoDbAsyncClient.deleteTable(
     table: String, init: DeleteTableRequestBuilder.() -> Unit = {}
 ): DeleteTableResponse {
-    return DeleteTableRequestBuilder(table).apply(init).build().logAndRun(::deleteTable).await()
+    return DeleteTableRequestBuilder(table).apply(init).build().logAndRunAsync(::deleteTable)
 }
 
 
