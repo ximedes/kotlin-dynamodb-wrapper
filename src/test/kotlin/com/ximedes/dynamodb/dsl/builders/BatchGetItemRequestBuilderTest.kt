@@ -53,7 +53,7 @@ internal class BatchGetItemRequestBuilderTest {
         ).build()
         val dslRequest = dslRequest {
             items("table1") {
-                // TODO this API sucks
+                // TODO: simplify key specification API
                 keys({ "a" from "b" },
                         { "c" from "d" })
             }
