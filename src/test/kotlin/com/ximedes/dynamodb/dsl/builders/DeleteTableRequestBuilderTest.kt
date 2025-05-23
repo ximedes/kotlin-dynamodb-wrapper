@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import software.amazon.awssdk.services.dynamodb.model.DeleteTableRequest
 
-internal class DeleteTableRequestBuilderTestm {
+internal class DeleteTableRequestBuilderTest {
 
     @Test
     fun nameMatches() {
