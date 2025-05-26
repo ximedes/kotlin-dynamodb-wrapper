@@ -76,7 +76,7 @@ internal class DeleteBuilderTest {
     @Test
     fun returnValuesOnConditionCheckFailure() {
         val sdkDelete =
-                Put.builder().returnValuesOnConditionCheckFailure(ReturnValuesOnConditionCheckFailure.ALL_OLD).build()
+                Delete.builder().returnValuesOnConditionCheckFailure(ReturnValuesOnConditionCheckFailure.ALL_OLD).build()
         val dslDelete = dslDelete {
             returnValuesOnConditionCheckFailure(ReturnValuesOnConditionCheckFailure.ALL_OLD)
         }
