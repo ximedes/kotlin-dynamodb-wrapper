@@ -54,7 +54,7 @@ internal class UpdateTableRequestBuilderTest {
 
     @Test
     fun `attribute definitions match`() {
-        val sdkRequest = CreateTableRequest.builder()
+        val sdkRequest = UpdateTableRequest.builder()
                 .attributeDefinitions(
                         AttributeDefinition.builder().attributeName("s1").attributeType(ScalarAttributeType.S).build(),
                         AttributeDefinition.builder().attributeName("s2").attributeType(ScalarAttributeType.S).build(),
@@ -75,7 +75,7 @@ internal class UpdateTableRequestBuilderTest {
 
     @Test
     fun `provisioned throughput`() {
-        val sdkRequest = CreateTableRequest.builder()
+        val sdkRequest = UpdateTableRequest.builder()
                 .provisionedThroughput(
                         ProvisionedThroughput.builder().readCapacityUnits(1L).writeCapacityUnits(2L).build()
                 )

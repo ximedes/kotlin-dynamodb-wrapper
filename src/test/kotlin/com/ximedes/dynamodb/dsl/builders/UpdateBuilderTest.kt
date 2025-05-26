@@ -40,7 +40,7 @@ internal class UpdateBuilderTest {
 
     @Test
     fun key() {
-        val sdkUpdate = Get.builder().key(
+        val sdkUpdate = Update.builder().key(
                 mapOf(
                         "a" to AttributeValue.builder().n("1").build(),
                         "b" to AttributeValue.builder().s("a").build()
