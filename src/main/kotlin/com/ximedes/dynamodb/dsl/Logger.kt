@@ -31,7 +31,7 @@ fun <T : DynamoDbRequest, U> T.logAndRun(block: (T) -> U): U {
     try {
         return block(this)
     } catch (e: Exception) {
-        logger.error("Caught exception when executing request $this")
+        logger.error("Caught exception when executing request $this", e)
         throw e
     }
 }
@@ -43,7 +43,7 @@ suspend fun <T : DynamoDbRequest, U> T.logAndRunAsync(block: (T) -> CompletableF
     try {
         return block(this).await()
     } catch (e: Exception) {
-        logger.error("Caught exception when executing request $this")
+        logger.error("Caught exception when executing request $this", e)
         throw e
     }
 }

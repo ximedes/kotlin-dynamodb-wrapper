@@ -49,11 +49,11 @@
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <kotlin.compiler.jvmTarget>17</kotlin.compiler.jvmTarget>
 
-        <kotlin_version>2.1.21</kotlin_version>
-        <dynamodb.version>2.20.43</dynamodb.version>
-        <junit.jupiter.version>5.10.0</junit.jupiter.version>
-        <kotlinx-coroutines.version>1.7.3</kotlinx-coroutines.version>
-        <slf4j-api.version>1.7.36</slf4j-api.version>
+        <kotlin_version>2.3.0</kotlin_version>
+        <dynamodb.version>2.41.1</dynamodb.version>
+        <junit.jupiter.version>5.11.4</junit.jupiter.version>
+        <kotlinx-coroutines.version>1.10.2</kotlinx-coroutines.version>
+        <slf4j-api.version>2.0.17</slf4j-api.version>
     </properties>
 
     <dependencies>
@@ -83,6 +83,12 @@
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j-api.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>${slf4j-api.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -92,7 +98,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.5.2</version>
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
