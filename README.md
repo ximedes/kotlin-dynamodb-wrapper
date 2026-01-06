@@ -12,7 +12,7 @@ A Kotlin DSL wrapper for the AWS DynamoDB SDK v2. Write clean, type-safe DynamoD
 <dependency>
     <groupId>com.ximedes</groupId>
     <artifactId>kotlin-dynamodb-wrapper</artifactId>
-    <version>0.7-SNAPSHOT</version>
+    <version>0.7</version>
 </dependency>
 ```
 
@@ -51,25 +51,6 @@ client.updateItem("counters") {
     }
 }
 ```
-
-## Supported Operations
-
-| Operation | Sync | Async |
-|-----------|------|-------|
-| PutItem | Yes | Yes |
-| GetItem | Yes | Yes |
-| UpdateItem | Yes | Yes |
-| DeleteItem | Yes | Yes |
-| Query | Yes | Yes |
-| Scan | Yes | Yes |
-| BatchGetItem | Yes | Yes |
-| BatchWriteItem | Yes | Yes |
-| TransactGetItems | Yes | Yes |
-| TransactWriteItems | Yes | Yes |
-| CreateTable | Yes | Yes |
-| DeleteTable | Yes | Yes |
-| UpdateTable | Yes | Yes |
-| DescribeTable | Yes | Yes |
 
 ## Building Items
 
