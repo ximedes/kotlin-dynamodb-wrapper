@@ -19,7 +19,7 @@ A Kotlin DSL wrapper for the AWS DynamoDB SDK v2. Write clean, type-safe DynamoD
 ### Gradle
 
 ```kotlin
-implementation("com.ximedes:kotlin-dynamodb-wrapper:0.7-SNAPSHOT")
+implementation("com.ximedes:kotlin-dynamodb-wrapper:0.7")
 ```
 
 ## Quick Start
