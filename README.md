@@ -4,6 +4,11 @@
 
 A Kotlin DSL wrapper for the AWS DynamoDB SDK v2. Write clean, type-safe DynamoDB operations with minimal boilerplate.
 
+> **Upgrade from 0.7.** In 0.7, combining two expression DSL blocks on one request — an `update { }`
+> with a `condition { }`, or a `keyCondition { }` with a `filter { }` — generated colliding
+> placeholders, which could silently write the wrong attribute. Fixed in 0.7.5. See the
+> [changelog](CHANGELOG.md) for details.
+
 ## Installation
 
 ### Maven
@@ -12,14 +17,14 @@ A Kotlin DSL wrapper for the AWS DynamoDB SDK v2. Write clean, type-safe DynamoD
 <dependency>
     <groupId>com.ximedes</groupId>
     <artifactId>kotlin-dynamodb-wrapper</artifactId>
-    <version>0.7-SNAPSHOT</version>
+    <version>0.7.5</version>
 </dependency>
 ```
 
 ### Gradle
 
 ```kotlin
-implementation("com.ximedes:kotlin-dynamodb-wrapper:0.7-SNAPSHOT")
+implementation("com.ximedes:kotlin-dynamodb-wrapper:0.7.5")
 ```
 
 ## Quick Start
@@ -310,6 +315,25 @@ client.updateItem("items") {
     attributeNames("#custom" to "customField")
 }
 ```
+
+The DSL generates placeholders of the form `#n1`, `#n2`, … and `:v1`, `:v2`, …. Pick manual
+placeholders outside that pattern; reusing a generated one throws `IllegalArgumentException` rather
+than silently overwriting it.
+
+## Reading Items
+
+Read attributes off a returned item with `take`, `takeOrNull` and `takeAll`:
+
+```kotlin
+val item = client.getItem("users") { key { "id" from "123" } }.item()
+
+val name: String = item.take("name")            // throws if absent
+val age: Int? = item.takeOrNull("age")          // null if absent
+val tags: List<String> = item.takeAll("tags")   // empty list if absent
+```
+
+`take` and `takeOrNull` support `String`, `Int`, `Long`, `Double`, `Boolean` and `ByteArray`.
+`takeAll` reads string, number and binary sets as `String`, `Int`, `Long`, `Double` or `ByteArray`.
 
 ## Logging
 

@@ -38,7 +38,16 @@ inline fun <reified T : Any> Item.takeOrNull(key: String): T? = when (T::class) 
     else -> throw IllegalArgumentException("Unsupported type ${T::class}")
 } as T?
 
+/**
+ * Reads a DynamoDB set attribute as a list. Returns an empty list when the attribute is absent, or
+ * when it does not hold a set of the requested type.
+ */
+@Suppress("UNCHECKED_CAST")
 inline fun <reified T : Any> Item.takeAll(key: String): List<T> = when (T::class) {
     String::class -> get(key)?.ss()?.toList() ?: emptyList<T>()
+    Int::class -> get(key)?.ns()?.map { it.toInt() } ?: emptyList<T>()
+    Long::class -> get(key)?.ns()?.map { it.toLong() } ?: emptyList<T>()
+    Double::class -> get(key)?.ns()?.map { it.toDouble() } ?: emptyList<T>()
+    ByteArray::class -> get(key)?.bs()?.map { it.asByteArray() } ?: emptyList<T>()
     else -> throw IllegalArgumentException("Unsupported type ${T::class}")
 } as List<T>

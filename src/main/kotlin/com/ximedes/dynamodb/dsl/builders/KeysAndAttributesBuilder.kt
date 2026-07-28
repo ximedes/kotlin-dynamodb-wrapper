@@ -32,8 +32,11 @@ class KeysAndAttributesBuilder {
         _builder.consistentRead(consistentRead)
     }
 
+    private val _attributeNames = mutableMapOf<String, String>()
+
     fun attributeNames(vararg names: Pair<String, String>) {
-        _builder.expressionAttributeNames(mapOf(*names))
+        _attributeNames.putAll(names)
+        _builder.expressionAttributeNames(_attributeNames)
     }
 
     fun projection(expression: String) {

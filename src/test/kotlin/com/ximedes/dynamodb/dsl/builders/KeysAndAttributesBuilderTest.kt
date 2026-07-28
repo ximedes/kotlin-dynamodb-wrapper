@@ -72,4 +72,13 @@ internal class KeysAndAttributesBuilderTest {
         assertEquals(sdkRequest.consistentRead(), dslKA.consistentRead())
     }
 
+
+    @Test
+    fun repeatedAttributeNamesAccumulate() {
+        val built = KeysAndAttributesBuilder().apply {
+            attributeNames("#a" to "first")
+            attributeNames("#b" to "second")
+        }.build()
+        assertEquals(mapOf("#a" to "first", "#b" to "second"), built.expressionAttributeNames())
+    }
 }

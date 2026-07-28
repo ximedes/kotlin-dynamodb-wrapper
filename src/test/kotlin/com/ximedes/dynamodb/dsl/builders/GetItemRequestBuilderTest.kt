@@ -70,4 +70,13 @@ internal class GetItemRequestBuilderTest {
         val dslRequest = dslRequest { key { "a" from "b" } }
         assertEquals(sdkRequest.key(), dslRequest.key())
     }
+
+    @Test
+    fun repeatedAttributeNamesAccumulate() {
+        val dslRequest = dslRequest {
+            attributeNames("#a" to "first")
+            attributeNames("#b" to "second")
+        }
+        assertEquals(mapOf("#a" to "first", "#b" to "second"), dslRequest.expressionAttributeNames())
+    }
 }

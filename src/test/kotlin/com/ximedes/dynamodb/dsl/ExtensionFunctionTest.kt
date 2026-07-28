@@ -20,6 +20,7 @@ package com.ximedes.dynamodb.dsl
 import com.ximedes.dynamodb.dsl.builders.ItemBuilder
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 internal class ExtensionFunctionTest {
@@ -50,5 +51,39 @@ internal class ExtensionFunctionTest {
         }.build()
 
         assertEquals(listOf("a", "b"), item.takeAll<String>("listKey"))
+    }
+
+    @Test
+    fun testTakeAllNumbers() {
+        val item = ItemBuilder().apply {
+            "numbers" from listOf(1, 2, 3)
+        }.build()
+
+        assertEquals(listOf(1, 2, 3), item.takeAll<Int>("numbers"))
+        assertEquals(listOf(1L, 2L, 3L), item.takeAll<Long>("numbers"))
+        assertEquals(listOf(1.0, 2.0, 3.0), item.takeAll<Double>("numbers"))
+    }
+
+    @Test
+    fun testTakeAllByteArrays() {
+        val item = ItemBuilder().apply {
+            "binaries" from listOf(byteArrayOf(1, 2), byteArrayOf(3))
+        }.build()
+
+        assertEquals(
+            listOf(listOf<Byte>(1, 2), listOf<Byte>(3)),
+            item.takeAll<ByteArray>("binaries").map { it.toList() }
+        )
+    }
+
+    @Test
+    fun testTakeAllOnMissingKeyReturnsEmptyList() {
+        assertEquals(emptyList<String>(), ItemBuilder().build().takeAll<String>("absent"))
+    }
+
+    @Test
+    fun testTakeAllRejectsUnsupportedType() {
+        val item = ItemBuilder().apply { "listKey" from listOf("a") }.build()
+        assertThrows(IllegalArgumentException::class.java) { item.takeAll<Boolean>("listKey") }
     }
 }

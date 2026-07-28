@@ -41,8 +41,3 @@ sealed class UpdateOperation {
     // DELETE operation (for sets)
     data class Delete(val path: AttributePath, val values: kotlin.collections.Set<Any>) : UpdateOperation()
 }
-
-/**
- * Container for a complete update expression consisting of multiple operations.
- */
-data class UpdateExpressionSet(val operations: List<UpdateOperation>)
