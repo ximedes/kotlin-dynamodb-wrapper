@@ -131,4 +131,49 @@ internal class TransactWriteItemsRequestBuilderTest {
         }
         assertEquals(sdkRequest.transactItems(), dslRequest.transactItems())
     }
+
+    /**
+     * Each item in a transaction renders its expressions independently, so placeholders generated
+     * for one item must never leak into or be overwritten by another item's.
+     */
+    @Test
+    fun transactionItemsKeepTheirOwnExpressions() {
+        val dslRequest = dslRequest {
+            put("users") {
+                item { "id" from "new-user" }
+                condition { attributeNotExists("id") }
+            }
+            update("counters") {
+                key { "id" from "user-count" }
+                update { set("count") { increment(1) } }
+                condition { "locked" eq false }
+            }
+            delete("sessions") {
+                key { "id" from "old-session" }
+                condition { "expired" eq true }
+            }
+        }
+
+        val put = dslRequest.transactItems()[0].put()
+        assertEquals(
+                "attribute_not_exists(id)",
+                resolve(put.conditionExpression(), put.expressionAttributeNames(), put.expressionAttributeValues())
+        )
+
+        val update = dslRequest.transactItems()[1].update()
+        assertEquals(
+                "SET count = count + 1",
+                resolve(update.updateExpression(), update.expressionAttributeNames(), update.expressionAttributeValues())
+        )
+        assertEquals(
+                "locked = false",
+                resolve(update.conditionExpression(), update.expressionAttributeNames(), update.expressionAttributeValues())
+        )
+
+        val delete = dslRequest.transactItems()[2].delete()
+        assertEquals(
+                "expired = true",
+                resolve(delete.conditionExpression(), delete.expressionAttributeNames(), delete.expressionAttributeValues())
+        )
+    }
 }

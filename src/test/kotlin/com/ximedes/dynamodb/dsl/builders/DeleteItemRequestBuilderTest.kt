@@ -112,4 +112,19 @@ internal class DeleteItemRequestBuilderTest {
     }
 
 
+
+    private fun DeleteItemRequest.resolved(expression: String?) =
+            resolve(expression, expressionAttributeNames(), expressionAttributeValues())
+
+    @Test
+    fun conditionDsl() {
+        val dslRequest = dslRequest {
+            key { "id" from "123" }
+            condition { ("status" eq "INACTIVE") and ("lastLogin" lt "2023-01-01") }
+        }
+        assertEquals(
+                "(status = \"INACTIVE\") AND (lastLogin < \"2023-01-01\")",
+                dslRequest.resolved(dslRequest.conditionExpression())
+        )
+    }
 }

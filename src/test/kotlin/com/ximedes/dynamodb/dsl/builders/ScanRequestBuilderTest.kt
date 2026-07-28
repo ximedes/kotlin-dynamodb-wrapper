@@ -120,6 +120,34 @@ internal class ScanRequestBuilderTest {
         assertEquals(sdkRequest.filterExpression(), dslRequest.filterExpression())
     }
 
+    private fun ScanRequest.resolved(expression: String?) =
+        resolve(expression, expressionAttributeNames(), expressionAttributeValues())
+
+    @Test
+    fun filterDsl() {
+        val dslRequest = dslRequest { filter { ("price" lt 50) and attributeExists("discount") } }
+        assertEquals(
+            "(price < 50) AND (attribute_exists(discount))",
+            dslRequest.resolved(dslRequest.filterExpression())
+        )
+    }
+
+    @Test
+    fun filterDslCombinedWithManualAttributes() {
+        val dslRequest = dslRequest {
+            filter { "status" eq "ACTIVE" }
+            attributeValues { ":extra" from "manual-value" }
+            attributeNames("#custom" to "customField")
+        }
+
+        assertEquals("status = \"ACTIVE\"", dslRequest.resolved(dslRequest.filterExpression()))
+        assertEquals("customField", dslRequest.expressionAttributeNames()["#custom"])
+        assertEquals(
+            AttributeValue.builder().s("manual-value").build(),
+            dslRequest.expressionAttributeValues()[":extra"]
+        )
+    }
+
     @Test
     fun limit() {
         val sdkRequest = ScanRequest.builder().limit(999).build()

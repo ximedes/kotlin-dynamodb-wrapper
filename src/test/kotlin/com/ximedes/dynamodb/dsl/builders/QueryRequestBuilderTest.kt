@@ -18,6 +18,7 @@
 package com.ximedes.dynamodb.dsl.builders
 
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue
@@ -56,6 +57,131 @@ internal class QueryRequestBuilderTest {
         val dslRequest = dslRequest { keyCondition("kce") }
         assertEquals("kce", dslRequest.keyConditionExpression())
         assertEquals(sdkRequest.keyConditionExpression(), dslRequest.keyConditionExpression())
+    }
+
+    private fun QueryRequest.resolved(expression: String?) =
+            resolve(expression, expressionAttributeNames(), expressionAttributeValues())
+
+    @Test
+    fun keyConditionDsl() {
+        val dslRequest = dslRequest { keyCondition { ("pk" eq "USER#123") and ("sk" ge "ORDER#2024") } }
+        assertEquals(
+                """(pk = "USER#123") AND (sk >= "ORDER#2024")""",
+                dslRequest.resolved(dslRequest.keyConditionExpression())
+        )
+    }
+
+    @Test
+    fun filterDsl() {
+        val dslRequest = dslRequest { filter { ("total" gt 100) and ("status" ne "CANCELLED") } }
+        assertEquals(
+                """(total > 100) AND (status <> "CANCELLED")""",
+                dslRequest.resolved(dslRequest.filterExpression())
+        )
+    }
+
+    /**
+     * A key condition and a filter on the same request each get their own placeholders; neither may
+     * overwrite the other's attribute names or values. This is the Query example from the README.
+     */
+    @Test
+    fun keyConditionAndFilterDslDoNotSharePlaceholders() {
+        val dslRequest = dslRequest("orders") {
+            keyCondition { ("pk" eq "USER#123") and ("sk" ge "ORDER#2024") }
+            filter { ("total" gt 100) and ("status" ne "CANCELLED") }
+        }
+
+        assertEquals(
+                """(pk = "USER#123") AND (sk >= "ORDER#2024")""",
+                dslRequest.resolved(dslRequest.keyConditionExpression())
+        )
+        assertEquals(
+                """(total > 100) AND (status <> "CANCELLED")""",
+                dslRequest.resolved(dslRequest.filterExpression())
+        )
+    }
+
+    @Test
+    fun keyConditionAndFilterDslKeepAllAttributeNamesAndValues() {
+        val dslRequest = dslRequest("orders") {
+            keyCondition { "pk" eq "USER#123" }
+            filter { "status" ne "CANCELLED" }
+        }
+
+        assertEquals(
+                setOf("pk", "status"),
+                dslRequest.expressionAttributeNames().values.toSet()
+        )
+        assertEquals(
+                setOf(
+                        AttributeValue.builder().s("USER#123").build(),
+                        AttributeValue.builder().s("CANCELLED").build()
+                ),
+                dslRequest.expressionAttributeValues().values.toSet()
+        )
+    }
+
+    /** Mixing the DSL with manually supplied placeholders is documented in the README. */
+    @Test
+    fun filterDslCombinedWithManualAttributes() {
+        val dslRequest = dslRequest {
+            filter { "status" eq "ACTIVE" }
+            attributeValues { ":extra" from "manual-value" }
+            attributeNames("#custom" to "customField")
+        }
+
+        assertEquals(
+                "status = \"ACTIVE\"",
+                dslRequest.resolved(dslRequest.filterExpression())
+        )
+        assertEquals("customField", dslRequest.expressionAttributeNames()["#custom"])
+        assertEquals(
+                AttributeValue.builder().s("manual-value").build(),
+                dslRequest.expressionAttributeValues()[":extra"]
+        )
+    }
+
+    /** An attribute used by two expressions is registered once and shares a single placeholder. */
+    @Test
+    fun attributeUsedByTwoExpressionsIsRegisteredOnce() {
+        val dslRequest = dslRequest {
+            keyCondition { "pk" eq "A" }
+            filter { "pk" ne "B" }
+        }
+
+        assertEquals(mapOf("pk" to 1), dslRequest.expressionAttributeNames().values.groupingBy { it }.eachCount())
+        assertEquals("pk = \"A\"", dslRequest.resolved(dslRequest.keyConditionExpression()))
+        assertEquals("pk <> \"B\"", dslRequest.resolved(dslRequest.filterExpression()))
+    }
+
+    @Test
+    fun manualPlaceholderClashingWithGeneratedOneIsRejected() {
+        val values = assertThrows(IllegalArgumentException::class.java) {
+            dslRequest {
+                filter { "status" eq "ACTIVE" }
+                attributeValues { ":v1" from "manual" }
+            }
+        }
+        assertTrue(values.message!!.contains(":v1"), values.message)
+
+        val names = assertThrows(IllegalArgumentException::class.java) {
+            dslRequest {
+                filter { "status" eq "ACTIVE" }
+                attributeNames("#n1" to "manual")
+            }
+        }
+        assertTrue(names.message!!.contains("#n1"), names.message)
+    }
+
+    @Test
+    fun generatedPlaceholderClashingWithManualOneIsRejected() {
+        val thrown = assertThrows(IllegalArgumentException::class.java) {
+            dslRequest {
+                attributeValues { ":v1" from "manual" }
+                filter { "status" eq "ACTIVE" }
+            }
+        }
+        assertTrue(thrown.message!!.contains(":v1"), thrown.message)
     }
 
     @Test

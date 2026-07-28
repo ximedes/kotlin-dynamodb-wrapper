@@ -113,4 +113,27 @@ internal class PutItemRequestBuilderTest {
     }
 
 
+
+    private fun PutItemRequest.resolved(expression: String?) =
+            resolve(expression, expressionAttributeNames(), expressionAttributeValues())
+
+    @Test
+    fun conditionDsl() {
+        val dslRequest = dslRequest {
+            item { "id" from "prod-001" }
+            condition { attributeNotExists("id") }
+        }
+        assertEquals("attribute_not_exists(id)", dslRequest.resolved(dslRequest.conditionExpression()))
+    }
+
+    @Test
+    fun conditionDslWithMultipleValues() {
+        val dslRequest = dslRequest {
+            condition { (("status" eq "ACTIVE") or ("status" eq "PENDING")) and ("count" lt 100) }
+        }
+        assertEquals(
+                "((status = \"ACTIVE\") OR (status = \"PENDING\")) AND (count < 100)",
+                dslRequest.resolved(dslRequest.conditionExpression())
+        )
+    }
 }

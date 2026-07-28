@@ -180,6 +180,11 @@ data class UpdateExpressionResult(
 
 /**
  * Builds an update expression using the DSL and renders it to a result.
+ *
+ * The returned placeholders start at `#n1` / `:v1`. Do not merge the results of two separate calls
+ * into one request: the second set overwrites the first. To put an update and a condition on the
+ * same request, use the request builder's `update` / `condition` functions, which render every
+ * expression with a shared renderer.
  */
 fun buildUpdate(block: UpdateExpressionBuilder.() -> Unit): UpdateExpressionResult {
     val builder = UpdateExpressionBuilder()

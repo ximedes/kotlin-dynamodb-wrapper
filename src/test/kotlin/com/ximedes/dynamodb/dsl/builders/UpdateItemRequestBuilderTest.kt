@@ -47,6 +47,87 @@ internal class UpdateItemRequestBuilderTest {
         assertEquals(sdkRequest.key(), dslRequest.key())
     }
 
+    private fun UpdateItemRequest.resolved(expression: String?) =
+            resolve(expression, expressionAttributeNames(), expressionAttributeValues())
+
+    @Test
+    fun updateDsl() {
+        val dslRequest = dslRequest {
+            update {
+                set("name", "NewName")
+                set("loginCount") { increment(1) }
+                remove("tempField")
+            }
+        }
+        assertEquals(
+                "SET name = \"NewName\", loginCount = loginCount + 1 REMOVE tempField",
+                dslRequest.resolved(dslRequest.updateExpression())
+        )
+    }
+
+    @Test
+    fun conditionDsl() {
+        val dslRequest = dslRequest { condition { "status" eq "ACTIVE" } }
+        assertEquals(
+                "status = \"ACTIVE\"",
+                dslRequest.resolved(dslRequest.conditionExpression())
+        )
+    }
+
+    /**
+     * An update expression and a condition expression on the same request each get their own
+     * placeholders. If they collide the request stays well-formed, so DynamoDB accepts it and
+     * silently writes the wrong attribute instead of reporting an error.
+     */
+    @Test
+    fun updateAndConditionDslDoNotSharePlaceholders() {
+        val dslRequest = dslRequest("users") {
+            key { "id" from "123" }
+            update { set("name", "NewName") }
+            condition { "status" eq "ACTIVE" }
+        }
+
+        assertEquals(
+                "SET name = \"NewName\"",
+                dslRequest.resolved(dslRequest.updateExpression())
+        )
+        assertEquals(
+                "status = \"ACTIVE\"",
+                dslRequest.resolved(dslRequest.conditionExpression())
+        )
+    }
+
+    @Test
+    fun updateAndConditionDslWithNestedPaths() {
+        val dslRequest = dslRequest("users") {
+            key { "id" from "123" }
+            update { set(AttributePath.of("address", "city"), "Amsterdam") }
+            condition { path("address", "country") eq "NL" }
+        }
+
+        assertEquals(
+                "SET address.city = \"Amsterdam\"",
+                dslRequest.resolved(dslRequest.updateExpression())
+        )
+        assertEquals(
+                "address.country = \"NL\"",
+                dslRequest.resolved(dslRequest.conditionExpression())
+        )
+    }
+
+    /** The counter increment from the README, guarded by a condition. */
+    @Test
+    fun incrementGuardedByConditionKeepsBothExpressions() {
+        val dslRequest = dslRequest("counters") {
+            key { "id" from "page-views" }
+            update { set("count") { increment(1) } }
+            condition { attributeExists("count") }
+        }
+
+        assertEquals("SET count = count + 1", dslRequest.resolved(dslRequest.updateExpression()))
+        assertEquals("attribute_exists(count)", dslRequest.resolved(dslRequest.conditionExpression()))
+    }
+
 
     @Test
     fun attributeValues() {

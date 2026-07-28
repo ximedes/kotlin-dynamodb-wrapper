@@ -79,4 +79,16 @@ internal class PutBuilderTest {
         assertEquals(sdkPut.returnValuesOnConditionCheckFailure(), dslPut.returnValuesOnConditionCheckFailure())
     }
 
+
+    private fun Put.resolved(expression: String?) =
+            resolve(expression, expressionAttributeNames(), expressionAttributeValues())
+
+    @Test
+    fun conditionDsl() {
+        val dslPut = dslPut {
+            item { "id" from "new-user" }
+            condition { attributeNotExists("id") }
+        }
+        assertEquals("attribute_not_exists(id)", dslPut.resolved(dslPut.conditionExpression()))
+    }
 }

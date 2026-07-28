@@ -31,6 +31,11 @@ class PutBuilder(tableName: String) {
 
     private val _builder = Put.builder().tableName(tableName)
 
+    private val expressions = ExpressionAccumulator(
+        { _builder.expressionAttributeValues(it) },
+        { _builder.expressionAttributeNames(it) }
+    )
+
     fun build(): Put = _builder.build()
 
     fun returnValuesOnConditionCheckFailure(returnValuesOnConditionCheckFailure: ReturnValuesOnConditionCheckFailure) {
@@ -50,35 +55,15 @@ class PutBuilder(tableName: String) {
      * Automatically generates attribute values and names.
      */
     fun condition(init: ConditionBuilder.() -> Condition) {
-        val result = buildCondition(init)
-        _builder.conditionExpression(result.expression)
-        mergeAttributeValues(result.attributeValues)
-        mergeAttributeNames(result.attributeNames)
-    }
-
-    private var _attributeValues: MutableMap<String, software.amazon.awssdk.services.dynamodb.model.AttributeValue>? = null
-    private var _attributeNames: MutableMap<String, String>? = null
-
-    private fun mergeAttributeValues(values: Map<String, software.amazon.awssdk.services.dynamodb.model.AttributeValue>) {
-        if (values.isEmpty()) return
-        if (_attributeValues == null) _attributeValues = mutableMapOf()
-        _attributeValues!!.putAll(values)
-        _builder.expressionAttributeValues(_attributeValues)
-    }
-
-    private fun mergeAttributeNames(names: Map<String, String>) {
-        if (names.isEmpty()) return
-        if (_attributeNames == null) _attributeNames = mutableMapOf()
-        _attributeNames!!.putAll(names)
-        _builder.expressionAttributeNames(_attributeNames)
+        _builder.conditionExpression(expressions.condition(init))
     }
 
     fun attributeValues(init: ItemBuilder.() -> Unit) {
-        mergeAttributeValues(ItemBuilder().apply(init).build())
+        expressions.attributeValues(ItemBuilder().apply(init).build())
     }
 
     fun attributeNames(vararg names: Pair<String, String>) {
-        mergeAttributeNames(mapOf(*names))
+        expressions.attributeNames(mapOf(*names))
     }
 
 }

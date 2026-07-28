@@ -135,6 +135,11 @@ data class ConditionExpressionResult(
 
 /**
  * Builds a condition expression using the DSL and renders it to a result.
+ *
+ * The returned placeholders start at `#n1` / `:v1`. Do not merge the results of two separate calls
+ * into one request: the second set overwrites the first. To put more than one expression on a
+ * request — a key condition and a filter, or an update and a condition — use the request builder's
+ * `condition` / `filter` / `update` functions, which render every expression with a shared renderer.
  */
 fun buildCondition(block: ConditionBuilder.() -> Condition): ConditionExpressionResult {
     val condition = ConditionBuilder().block()

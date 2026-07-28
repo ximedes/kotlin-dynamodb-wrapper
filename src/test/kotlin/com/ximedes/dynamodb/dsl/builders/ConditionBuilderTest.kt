@@ -299,12 +299,20 @@ internal class ConditionBuilderTest {
             filter { "status" ne "CANCELLED" }
         }.build()
 
-        assertEquals("(#n1 = :v1) AND (#n2 >= :v2)", dslRequest.keyConditionExpression())
-        // filter uses its own renderer, so counters start fresh
-        assertEquals("#n1 <> :v1", dslRequest.filterExpression())
-        // All attribute values/names should be merged
-        assertNotNull(dslRequest.expressionAttributeValues())
-        assertNotNull(dslRequest.expressionAttributeNames())
+        val names = dslRequest.expressionAttributeNames()
+        val values = dslRequest.expressionAttributeValues()
+
+        // The key condition and the filter share one placeholder namespace on the request, so
+        // neither may reuse — and thereby overwrite — the other's placeholders.
+        assertEquals(
+                "(pk = \"USER#123\") AND (sk >= \"ORDER#2024\")",
+                resolve(dslRequest.keyConditionExpression(), names, values)
+        )
+        assertEquals("status <> \"CANCELLED\"", resolve(dslRequest.filterExpression(), names, values))
+
+        // Every attribute name and value survives the merge.
+        assertEquals(setOf("pk", "sk", "status"), names.values.toSet())
+        assertEquals(3, values.size)
     }
 
     // ========== Edge Cases and Corner Cases ==========
@@ -678,8 +686,11 @@ internal class ConditionBuilderTest {
             condition { "status" eq "ACTIVE" }
         }.build()
 
-        assertEquals("#n1 = :v1", request.conditionExpression())
-        assertNotNull(request.updateExpression())
+        val names = request.expressionAttributeNames()
+        val values = request.expressionAttributeValues()
+
+        assertEquals("SET count = count + 1", resolve(request.updateExpression(), names, values))
+        assertEquals("status = \"ACTIVE\"", resolve(request.conditionExpression(), names, values))
     }
 
     @Test

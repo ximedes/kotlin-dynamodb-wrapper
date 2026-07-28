@@ -26,6 +26,11 @@ import software.amazon.awssdk.services.dynamodb.model.Select
 class ScanRequestBuilder(tableName: String) {
     private val _builder = ScanRequest.builder().tableName(tableName)
 
+    private val expressions = ExpressionAccumulator(
+        { _builder.expressionAttributeValues(it) },
+        { _builder.expressionAttributeNames(it) }
+    )
+
     fun build(): ScanRequest = _builder.build()
 
     fun indexName(indexName: String) {
@@ -49,39 +54,19 @@ class ScanRequestBuilder(tableName: String) {
      * Automatically generates attribute values and names.
      */
     fun filter(init: ConditionBuilder.() -> Condition) {
-        val result = buildCondition(init)
-        _builder.filterExpression(result.expression)
-        mergeAttributeValues(result.attributeValues)
-        mergeAttributeNames(result.attributeNames)
+        _builder.filterExpression(expressions.condition(init))
     }
 
     fun exclusiveStartKey(init: ItemBuilder.() -> Unit) {
         _builder.exclusiveStartKey(ItemBuilder().apply(init).build())
     }
 
-    private var _attributeValues: MutableMap<String, software.amazon.awssdk.services.dynamodb.model.AttributeValue>? = null
-    private var _attributeNames: MutableMap<String, String>? = null
-
-    private fun mergeAttributeValues(values: Map<String, software.amazon.awssdk.services.dynamodb.model.AttributeValue>) {
-        if (values.isEmpty()) return
-        if (_attributeValues == null) _attributeValues = mutableMapOf()
-        _attributeValues!!.putAll(values)
-        _builder.expressionAttributeValues(_attributeValues)
-    }
-
-    private fun mergeAttributeNames(names: Map<String, String>) {
-        if (names.isEmpty()) return
-        if (_attributeNames == null) _attributeNames = mutableMapOf()
-        _attributeNames!!.putAll(names)
-        _builder.expressionAttributeNames(_attributeNames)
-    }
-
     fun attributeValues(init: ItemBuilder.() -> Unit) {
-        mergeAttributeValues(ItemBuilder().apply(init).build())
+        expressions.attributeValues(ItemBuilder().apply(init).build())
     }
 
     fun attributeNames(vararg names: Pair<String, String>) {
-        mergeAttributeNames(mapOf(*names))
+        expressions.attributeNames(mapOf(*names))
     }
 
     fun projection(expression: String) {

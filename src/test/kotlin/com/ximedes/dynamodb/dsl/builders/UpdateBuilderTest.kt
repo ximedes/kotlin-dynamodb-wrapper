@@ -55,6 +55,40 @@ internal class UpdateBuilderTest {
         assertEquals(sdkUpdate.key(), dslUpdate.key())
     }
 
+    private fun Update.resolved(expression: String?) =
+            resolve(expression, expressionAttributeNames(), expressionAttributeValues())
+
+    @Test
+    fun updateDsl() {
+        val dslUpdate = dslUpdate { update { set("count") { increment(1) } } }
+        assertEquals("SET count = count + 1", dslUpdate.resolved(dslUpdate.updateExpression()))
+    }
+
+    @Test
+    fun conditionDsl() {
+        val dslUpdate = dslUpdate { condition { attributeNotExists("deletedAt") } }
+        assertEquals(
+                "attribute_not_exists(deletedAt)",
+                dslUpdate.resolved(dslUpdate.conditionExpression())
+        )
+    }
+
+    /**
+     * Update and condition expressions inside a transaction each get their own placeholders.
+     * Neither may overwrite the other's attribute names or values.
+     */
+    @Test
+    fun updateAndConditionDslDoNotSharePlaceholders() {
+        val dslUpdate = dslUpdate("counters") {
+            key { "id" from "user-count" }
+            update { set("count") { increment(1) } }
+            condition { "locked" eq false }
+        }
+
+        assertEquals("SET count = count + 1", dslUpdate.resolved(dslUpdate.updateExpression()))
+        assertEquals("locked = false", dslUpdate.resolved(dslUpdate.conditionExpression()))
+    }
+
     @Test
     fun attributeValues() {
         val sdkUpdate =

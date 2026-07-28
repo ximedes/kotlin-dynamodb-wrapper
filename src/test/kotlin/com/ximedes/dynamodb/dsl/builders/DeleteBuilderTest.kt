@@ -84,4 +84,16 @@ internal class DeleteBuilderTest {
     }
 
 
+
+    private fun Delete.resolved(expression: String?) =
+            resolve(expression, expressionAttributeNames(), expressionAttributeValues())
+
+    @Test
+    fun conditionDsl() {
+        val dslDelete = dslDelete {
+            key { "id" from "old-session" }
+            condition { "expired" eq true }
+        }
+        assertEquals("expired = true", dslDelete.resolved(dslDelete.conditionExpression()))
+    }
 }
